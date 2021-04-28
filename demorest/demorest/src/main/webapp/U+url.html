@@ -1,0 +1,258 @@
+<html>
+<head>
+<link rel="stylesheet"
+ href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script
+ src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script
+ src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+<script type="text/javascript">
+ var myapp = angular.module("myApp", []);
+ 
+ myapp.controller(
+     "umcontroller",
+	 
+     function($scope, $http) {
+      $scope.users = [];
+      $scope.form = {
+       userid : "",
+       username : "",
+       email : "",
+	   phonenumber:""
+      };
+	  
+      _refreshPageData();
+     <!-- $scope.check = "";--->
+	  
+	  
+      $scope.submitUser = function() {
+        method = "POST";
+        url = 'http://localhost:8080/demorest/webresources/users/addUser';
+       
+       $http({
+        method : method,
+        url : url,
+        data : angular.toJson($scope.form),
+        headers : {
+         'Content-Type' : 'application/json'
+        }
+       }).then(function successCallback(response) {
+        $scope.form.check = "";
+        _success(response);
+       }, function errorCallback(response) {
+        alert("ERROE:: " + response);
+       });
+      };
+	  
+	  
+	  
+	  
+	  
+      $scope.removeUser = function(user) {
+       $http(
+         {
+        	 
+          method : 'DELETE',
+          url : 'http://localhost:8080/demorest/webresources/users/delUser/userid/'
+            + user
+            
+         }).then(function successCallback(response) {
+        	
+        _success(response);
+       }, function errorCallback(response) {
+        alert("ERROE:: " + response);
+       });
+      };
+
+
+
+
+
+      $scope.editUser = function(user) {
+       method = "PUT";
+        url = ':http://localhost:8080/demorest/webresources/users/updateUser/userid/'
+          + $scope.form.userid
+          + "/name/"
+          + $scope.form.username
+          + "/email/"
+          + $scope.form.email;
+		  +"/Phoneno/"
+		  +$scope.form.phonenumber;
+		  
+		   $http({
+        method : method,
+        url : url,
+        data : angular.toJson($scope.form),
+        headers : {
+         'Content-Type' : 'application/json'
+        }
+       }).then(function successCallback(response) {
+        $scope.form.check = "";
+        _success(response);
+       }, function errorCallback(response) {
+        alert("ERROE:: " + response);
+       });
+      };
+	  
+	  
+	  
+	  
+      function _refreshPageData() {
+       $http(
+         {
+          method : 'GET',
+          url : 'http://localhost:8080/demorest/webresources/users'
+         }).then(function successCallback(response) {
+        $scope.users = response.data;
+       }, function errorCallback(response) {
+        console.log(response.statusText);
+       });
+      }
+
+
+
+      function _success(response) {
+       _refreshPageData();
+       _clearForm()
+      }
+
+
+
+      function _error(response) {
+       console.log(response.statusText);
+      }
+	  
+	  
+      function _clearForm() {
+       $scope.form.username = "";
+       $scope.form.email = "";
+       $scope.form.userid = "";
+	   $scope.form.phonenumber = "";
+      }
+
+      $scope.clearForm = function() {
+       _clearForm();
+      }
+     });
+</script>
+</head>
+<body ng-app="myApp" ng-controller="umcontroller">
+
+ <div class="generic-container" ng-controller="umcontroller">
+  <div class="panel panel-default">
+   <div class="panel-heading">
+    <span class="lead">User-app</span>
+   </div>
+   <div class="formcontainer">
+    <form ng-submit="submitUser()">
+     <div class="row">
+   <!--   <input type="hidden" ng-model="form.userid" /> <input type="hidden"
+       ng-model="form.check" /> --->
+      <div class="form-group col-md-12">
+       <label class="col-md-2 control-lable" for="userid">Id</label>
+       <div class="col-md-7">
+        <input type="text" ng-model="form.userid" name="userid"
+         class="username form-control input-sm"
+         placeholder="Enter your Id" required ng-minlength="1" />
+
+       </div>
+      </div>
+     </div>
+	 
+     <div class="row">
+      <div class="form-group col-md-12">
+       <label class="col-md-2 control-lable" for="username">Name</label>
+       <div class="col-md-7">
+        <input type="text" ng-model="form.username" id="username"
+         class="username form-control input-sm"
+         placeholder="Enter your name" required ng-minlength="3" />
+
+       </div>
+      </div>
+     </div>
+
+
+     <div class="row">
+      <div class="form-group col-md-12">
+       <label class="col-md-2 control-lable" for="email">Email</label>
+       <div class="col-md-7">
+        <input type="text" ng-model="form.email" id="email" name="email"
+         class="username form-control input-sm"
+         placeholder="Enter your Email " />
+       </div>
+      </div>
+     </div>
+	 
+	 
+	 <div class="row">
+      <div class="form-group col-md-12">
+       <label class="col-md-2 control-lable" for="phonenumber">Phoneno</label>
+       <div class="col-md-7">
+        <input type="text" ng-model="form.phonenumber" id="phonenumber" name="phonenumber"
+         class="username form-control input-sm"
+         placeholder="Enter your Phone number " />
+       </div>
+      </div>
+     </div>
+
+
+<center>
+
+     <div class="row">
+      <div class="form-actions floatRight">
+       <input type="submit" value="Add " class="btn-sm" ng-disabled="myForm.$invalid">
+	   
+	   
+       <button type="button" ng-click="clearForm()"
+        class="btn-sm">Reset Form</button>
+		
+		
+		
+	
+		
+		<button type="button" ng-click="Display()"
+        class="btn-sm">Display users</button>
+      </div>
+     </div>
+	 
+</center>
+
+    </form>
+   </div>
+  </div>
+  <div class="panel panel-default">
+   <div class="panel-heading">
+    <span class="lead">Users</span>
+   </div>
+   <div class="tablecontainer">
+    <table class="table table-hover">
+     <thead>
+      <tr>
+       <th>ID.</th>
+       <th>Name</th>
+       <th>Email</th>
+	   <th>Phoneno</th>
+       <th width="20%"></th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr ng-repeat="u in users">
+       <td><span ng-bind="u.userid"></span></td>
+       <td><span ng-bind="u.username"></span></td>
+       <td><span ng-bind="u.email"></span></td>
+	   <td><span ng-bind="u.phonenumber"></span></td>
+       <td>
+        <button type="button" ng-click="editUser(u)"
+         class="btn btn-success custom-width">Edit</button>
+        <button type="button" ng-click="removeUser(u.userid)"
+         class="btn btn-danger custom-width">Remove</button>
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+  </div>
+ </div>
+
+</body>
+</html>
